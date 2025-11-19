@@ -1,11 +1,17 @@
+import { defineConfig } from "eslint/config";
 import tseslint from "@typescript-eslint/eslint-plugin";
 import parser from "@typescript-eslint/parser";
-import type { Linter } from "eslint";
+
+import { includeIgnoreFile } from "@eslint/compat";
+import { fileURLToPath } from "node:url";
+
+const gitignorePath = fileURLToPath(new URL(".gitignore", import.meta.url));
+
 
 import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
 
-
-const config: Linter.Config[] = [
+export default defineConfig([
+    includeIgnoreFile(gitignorePath, "Imported .gitignore patterns"),
     {
         files: ["**/*.ts"],
         languageOptions: {
@@ -19,7 +25,5 @@ const config: Linter.Config[] = [
             "no-implicit-coercion": "error",
         },
     },
-    // eslintPluginPrettierRecommended,
-];
-
-export default config;
+    eslintPluginPrettierRecommended,
+]);
