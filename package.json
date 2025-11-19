@@ -8,7 +8,7 @@
         "dev": "vite",
         "build": "tsc && vite build",
         "preview": "vite preview",
-        "format": "prettier 'src/**/*.ts' 'src/**/*.tsx' '*.ts' --write"
+        "lint": "eslint ."
     },
     "keywords": [],
     "author": "",
@@ -18,11 +18,20 @@
         "otpauth": "^9.4.1",
         "preact": "^10.27.2"
     },
+    "//devDependencies": {
+        "jiti": "Needed to allow ESLint to read its Typescript config file."
+    },
     "devDependencies": {
         "@crxjs/vite-plugin": "^2.2.1",
         "@preact/preset-vite": "^2.10.2",
         "@types/chrome": "^0.1.30",
         "@types/node": "^24.10.1",
+        "@typescript-eslint/eslint-plugin": "^8.47.0",
+        "@typescript-eslint/parser": "^8.47.0",
+        "eslint": "^9.39.1",
+        "eslint-config-prettier": "^10.1.8",
+        "eslint-plugin-prettier": "^5.5.4",
+        "jiti": "^2.6.1",
         "prettier": "^3.6.2",
         "sharp": "^0.34.5",
         "typescript": "^5.9.3",

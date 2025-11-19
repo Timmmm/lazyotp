@@ -31,7 +31,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             alert("Not sure what you clicked on exactly. Was it an input?");
         }
     } else if (message.type === "GET_IMAGE_URLS") {
-
         const images = document.getElementsByTagName("img");
         const image_srcs: string[] = [];
         for (const img of images) {

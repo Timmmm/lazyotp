@@ -88,10 +88,10 @@ const App = () => {
 
                 const blobs: Blob[] = await Promise.all(
                     // Must use same-origin for CORS reasons.
-                    response.image_srcs.map((u: string) => fetch(u, { mode: "same-origin" }).then(r => r.blob()))
+                    response.image_srcs.map((u: string) => fetch(u, { mode: "same-origin" }).then((r) => r.blob()))
                 );
 
-                const images = await Promise.all(blobs.map(b => loadImageFromBlob(b)));
+                const images = await Promise.all(blobs.map((b) => loadImageFromBlob(b)));
 
                 for (const image of images) {
                     // Skip small or very large images.
@@ -160,7 +160,6 @@ const App = () => {
             </div>
             {/* Add new account. */}
             <div style={{ display: "flex", flexDirection: "row", gap: "12px" }}>
-
                 <div style={{ display: "flex", flexDirection: "column", gap: "12px", flex: 1 }}>
                     <input
                         type="text"
