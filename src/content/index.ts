@@ -5,7 +5,7 @@ import jsQR from "jsqr";
 // This is silly but the Chrome extension's context menu handler doesn't
 // tell us which element is clicked, so we have to ask the page instead.
 
-var g_contextElement: EventTarget | null = null;
+let g_contextElement: EventTarget | null = null;
 document.addEventListener(
     "contextmenu",
     (event) => {
@@ -39,6 +39,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 continue;
             }
             image_srcs.push(img.src);
+        }
+
+        let i = 4;
+        if (i) {
+            ++i;
         }
 
         console.warn(image_srcs);

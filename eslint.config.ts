@@ -1,6 +1,6 @@
 import { defineConfig } from "eslint/config";
-import tseslint from "@typescript-eslint/eslint-plugin";
-import parser from "@typescript-eslint/parser";
+import eslint from "@eslint/js";
+import tseslint from "typescript-eslint";
 
 import { includeIgnoreFile } from "@eslint/compat";
 import { fileURLToPath } from "node:url";
@@ -9,20 +9,25 @@ const gitignorePath = fileURLToPath(new URL(".gitignore", import.meta.url));
 
 import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
 
-export default defineConfig([
+export default defineConfig(
     includeIgnoreFile(gitignorePath, "Imported .gitignore patterns"),
+    eslint.configs.recommended,
+    tseslint.configs.strictTypeChecked,
     {
-        files: ["**/*.ts"],
         languageOptions: {
-            parser,
-            parserOptions: { ecmaVersion: 2020, sourceType: "module" },
-        },
-        plugins: {
-            "@typescript-eslint": tseslint.rules,
-        },
-        rules: {
-            "no-implicit-coercion": "error",
+            parserOptions: {
+                projectService: true,
+            },
         },
     },
     eslintPluginPrettierRecommended,
-]);
+    {
+        rules: {
+            "no-implicit-coercion": "error",
+            // TODO: This still isn't working.
+            "@typescript-eslint/strict-boolean-expressions": "error",
+            eqeqeq: "error",
+            curly: ["error", "all"],
+        },
+    }
+);

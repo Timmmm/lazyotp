@@ -58,7 +58,9 @@ const App = () => {
 
     const handleAddAccount = async () => {
         // TODO: Disable the button instead.
-        if (!newAccountName || !newAccountSecret) return;
+        if (!newAccountName || !newAccountSecret) {
+            return;
+        }
         const newAccount: Account = {
             id: Date.now().toString(),
             name: newAccountName,
@@ -165,14 +167,18 @@ const App = () => {
                         type="text"
                         placeholder="Account Name (e.g. Google)"
                         value={newAccountName}
-                        onInput={(e) => setNewAccountName(e.currentTarget.value)}
+                        onInput={(e) => {
+                            setNewAccountName(e.currentTarget.value);
+                        }}
                         style={{ padding: "8px", borderRadius: "4px", border: "1px solid #ddd" }}
                     />
                     <input
                         type="text"
                         placeholder="Secret Key"
                         value={newAccountSecret}
-                        onInput={(e) => setNewAccountSecret(e.currentTarget.value)}
+                        onInput={(e) => {
+                            setNewAccountSecret(e.currentTarget.value);
+                        }}
                         style={{ padding: "8px", borderRadius: "4px", border: "1px solid #ddd" }}
                     />
                 </div>

@@ -15,25 +15,16 @@ const updateContextMenus = async () => {
     });
 };
 
-// Update the context menus when the extension is installed or updated.
-chrome.runtime.onInstalled.addListener(() => {
-    updateContextMenus();
-});
-
-// Update the context menus when the accounts are changed.
-chrome.storage.onChanged.addListener((changes, areaName) => {
-    if (areaName === "local" && changes.lazyotp_accounts) {
-        updateContextMenus();
-    }
-});
-
-// Called when the context menu is clicked.
-chrome.contextMenus.onClicked.addListener(async (info, tab) => {
-    const accountId = info.menuItemId;
+const onContextMenu = async (accountId: string | number, tabId: number | undefined) => {
     const accounts = await getAccounts();
     const account = accounts.find((a) => a.id === accountId);
 
-    if (account !== undefined && tab?.id !== undefined) {
+    let i = 0;
+    if (i) {
+        ++i;
+    }
+
+    if (account !== undefined && tabId !== undefined) {
         let code: string;
         try {
             const totp = new TOTP({ secret: Secret.fromBase32(account.secret) });
@@ -42,8 +33,23 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
             code = "ERROR";
         }
 
-        // TODO: Get the clicked element somehow.
-
-        chrome.tabs.sendMessage(tab.id, { type: "FILL_OTP", code });
+        await chrome.tabs.sendMessage(tabId, { type: "FILL_OTP", code });
     }
+};
+
+// Update the context menus when the extension is installed or updated.
+chrome.runtime.onInstalled.addListener(() => {
+    void updateContextMenus();
+});
+
+// Update the context menus when the accounts are changed.
+chrome.storage.onChanged.addListener((changes, areaName) => {
+    if (areaName === "local" && changes.lazyotp_accounts) {
+        void updateContextMenus();
+    }
+});
+
+// Called when the context menu is clicked.
+chrome.contextMenus.onClicked.addListener((info, tab) => {
+    void onContextMenu(info.menuItemId, tab?.id);
 });
