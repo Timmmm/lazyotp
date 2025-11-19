@@ -1,5 +1,3 @@
-import jsQR from "jsqr";
-
 // Content injected into all pages.
 
 // This is silly but the Chrome extension's context menu handler doesn't

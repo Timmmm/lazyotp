@@ -22,6 +22,9 @@
         "jsxImportSource": "preact",
         // Needed for some imports.
         "allowSyntheticDefaultImports": true,
+        // Don't check stuff in node_modules libraries, otherwise we need
+        // a ton of irrelevant type declaration packages.
+        "skipLibCheck": true,
 
         // Stricter Typescript.
         "noImplicitOverride": true,
