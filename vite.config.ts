@@ -14,16 +14,16 @@ const ICON_SIZES = [16, 32, 48, 128];
 
 const genIcons = () => ({
     name: "sharp",
-    transform: () => {
-        ICON_SIZES.map((size) => {
-            sharp("icons/icon.svg")
-                .resize(size)
-                .png()
-                .toBuffer()
-                .then((file) => {
-                    writeFile(`icons/icon-${size}.png`, file);
-                });
-        });
+    transform: async () => {
+        await Promise.all(
+            ICON_SIZES.map((size) =>
+                sharp("icons/icon.svg")
+                    .resize(size)
+                    .png()
+                    .toBuffer()
+                    .then((file) => writeFile(`icons/icon-${size.toFixed()}.png`, file))
+            )
+        );
     },
 });
 
