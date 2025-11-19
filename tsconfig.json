@@ -1,28 +1,33 @@
 {
     "compilerOptions": {
         "target": "ESNext",
-        "useDefineForClassFields": true,
         "lib": [
             "DOM",
             "DOM.Iterable",
             "ESNext"
         ],
+        // Don't allow importing JS files.
         "allowJs": false,
-        "skipLibCheck": true,
-        "esModuleInterop": false,
-        "allowSyntheticDefaultImports": true,
         "strict": true,
-        "forceConsistentCasingInFileNames": true,
         "module": "ESNext",
         "moduleResolution": "Node",
+        // Allow importing JSON files.
         "resolveJsonModule": true,
         "isolatedModules": true,
+        // Don't emit code since Vite will do it.
         "noEmit": true,
+        // How to compile TSX.
         "jsx": "react-jsx",
+        // Import Preact in TSX files.
         "jsxImportSource": "preact",
-        "noImplicitAny": true,
+        // Needed for some imports.
+        "allowSyntheticDefaultImports": true,
+
+        // Stricter Typescript.
         "noImplicitOverride": true,
         "noUncheckedIndexedAccess": true,
+        "noFallthroughCasesInSwitch": true,
+        "noUnusedLocals": true,
     },
     "include": [
         "src",
