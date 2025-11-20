@@ -34,5 +34,6 @@ export default defineConfig({
     plugins: [genIcons(), preact(), crx({ manifest }), zipPack()],
     build: {
         minify: false,
+        target: "esnext",
     },
 });
