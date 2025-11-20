@@ -4,6 +4,7 @@ import { getAccounts, saveAccount, deleteAccount } from "../storage";
 import { Account } from "../account";
 import type { Request, ResponseGetImageUrls } from "../content/message_interface";
 import jsQR from "jsqr";
+import { URI } from "otpauth";
 
 function loadImageFromBlob(blob: Blob): Promise<ImageData> {
     return new Promise((resolve, reject) => {
@@ -48,7 +49,7 @@ const App = () => {
     const [accounts, setAccounts] = useState<Account[]>([]);
     // Edit boxes for new account.
     const [newAccountName, setNewAccountName] = useState("");
-    const [newAccountSecret, setNewAccountSecret] = useState("");
+    const [newAccountUri, setNewAccountUri] = useState("");
 
     useEffect(() => {
         void loadAccounts();
@@ -60,23 +61,34 @@ const App = () => {
     };
 
     const handleAddAccount = async () => {
-        // TODO: Disable the button instead.
-        if (!newAccountName || !newAccountSecret) {
+        if (newAccountName === "") {
+            alert(
+                "Please provide an account name. It can be anything (it's just for your reference) but must be unique."
+            );
+            return;
+        }
+        if (newAccountUri === "") {
+            alert(
+                "Please provide an OTP URI. This starts with 'otpauth://', you can auto-fill it using the QR code button."
+            );
             return;
         }
         const newAccount: Account = {
-            id: Date.now().toString(),
             name: newAccountName,
-            secret: newAccountSecret.replace(/\s/g, "").toUpperCase(),
+            uri: newAccountUri,
         };
         try {
             await saveAccount(newAccount);
         } catch (e) {
-            alert((e as Error).message);
+            if (e instanceof Error) {
+                alert(e.message);
+            } else {
+                alert(e);
+            }
             return;
         }
         setNewAccountName("");
-        setNewAccountSecret("");
+        setNewAccountUri("");
         await loadAccounts();
     };
 
@@ -107,28 +119,25 @@ const App = () => {
                     const code = jsQR(image.data, image.width, image.height);
 
                     if (code !== null && code.data.startsWith("otpauth://")) {
-                        const uri = new URL(code.data);
-                        const secret = uri.searchParams.get("secret");
-                        const labelPart = uri.pathname.split(":").pop();
-                        const label = labelPart !== undefined ? decodeURIComponent(labelPart) : null;
-                        const issuer = uri.searchParams.get("issuer");
+                        try {
+                            const otp = URI.parse(code.data);
 
-                        if (secret !== null && secret !== "") {
-                            setNewAccountSecret(secret);
-                            if (issuer !== null && issuer !== "") {
-                                setNewAccountName(issuer);
-                            } else if (label !== null && label !== "") {
-                                setNewAccountName(label);
-                            } else {
-                                // TODO: New Account N+1
-                                setNewAccountName("New Account");
+                            setNewAccountUri(code.data);
+                            if (otp.label !== "") {
+                                setNewAccountName(otp.label);
+                            } else if (otp.issuer !== "") {
+                                setNewAccountName(otp.issuer);
                             }
-                            break;
+                            return;
+                        } catch (_e) {
+                            console.warn(_e);
                         }
                     }
                 }
+
+                alert("Couldn't find valid OTP QR code in page.");
             } catch (e) {
-                alert(`Could not scan page. Try refreshing the page. Error: ${(e as Error).message}`);
+                alert(`Error scanning page. Try refreshing the page. Error: ${(e as Error).message}`);
             }
         }
     };
@@ -140,7 +149,7 @@ const App = () => {
                 {accounts.length === 0 && <p style={{ color: "#666" }}>No accounts yet.</p>}
                 {accounts.map((acc) => (
                     <div
-                        key={acc.id}
+                        key={acc.name}
                         style={{
                             background: "white",
                             padding: "12px",
@@ -160,10 +169,10 @@ const App = () => {
                                     userSelect: "all",
                                 }}
                             >
-                                {acc.secret}
+                                {acc.uri}
                             </div>
                             <button
-                                onClick={() => void handleDelete(acc.id)}
+                                onClick={() => void handleDelete(acc.name)}
                                 style={{ border: "none", background: "none", color: "red", cursor: "pointer" }}
                             >
                                 ×
@@ -186,10 +195,10 @@ const App = () => {
                     />
                     <input
                         type="text"
-                        placeholder="Secret Key"
-                        value={newAccountSecret}
+                        placeholder="otpauth://..."
+                        value={newAccountUri}
                         onInput={(e) => {
-                            setNewAccountSecret(e.currentTarget.value);
+                            setNewAccountUri(e.currentTarget.value);
                         }}
                         style={{ padding: "8px", borderRadius: "4px", border: "1px solid #ddd" }}
                     />

@@ -11,7 +11,7 @@ You probably shouldn't use this unless you understand the security implications.
 1. Install from the Chrome Extension store.
 2. Pin the extension.
 3. Navigate to the OTP registration page that shows you a QR code.
-4. Click the extension, then the QR code icon to auto-fill (or you can manually fill in the details if you know the secret). The account name doesn't matter; it's just for your reference.
+4. Click the extension, then the QR code icon to auto-fill (or you can manually fill in the details if you know the URI). The account name doesn't matter; it's just for your reference.
 5. When prompted for a OTP, right-click the edit box and select your account. It should enter the code.
 
 ## Why does it need access to all websites?

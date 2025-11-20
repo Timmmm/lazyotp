@@ -1,5 +1,5 @@
 import { getAccounts } from "../storage";
-import { Secret, TOTP } from "otpauth";
+import { URI } from "otpauth";
 
 // Add a context menu entry for each account.
 const updateContextMenus = async () => {
@@ -8,22 +8,22 @@ const updateContextMenus = async () => {
     const accounts = await getAccounts();
     accounts.forEach((account) => {
         chrome.contextMenus.create({
-            id: account.id,
+            id: account.name,
             title: account.name,
             contexts: ["editable"],
         });
     });
 };
 
-const onContextMenu = async (accountId: string | number, tabId: number | undefined) => {
+const onContextMenu = async (accountName: string | number, tabId: number | undefined) => {
     const accounts = await getAccounts();
-    const account = accounts.find((a) => a.id === accountId);
+    const account = accounts.find((a) => a.name === accountName);
 
     if (account !== undefined && tabId !== undefined) {
         let code: string;
         try {
-            const totp = new TOTP({ secret: Secret.fromBase32(account.secret) });
-            code = totp.generate();
+            const otp = URI.parse(account.uri);
+            code = otp.generate();
         } catch (_e) {
             code = "ERROR";
         }
