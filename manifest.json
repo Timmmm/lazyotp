@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "LazyOTP",
     "version": "1.0.0",
-    "description": "Autofill OTP codes from local storage",
+    "description": "Chrome OTP extension for people who don't want to use OTP.",
     "action": {
         "default_popup": "index.html"
     },

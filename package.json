@@ -1,7 +1,7 @@
 {
     "name": "lazyotp",
     "version": "1.0.0",
-    "description": "",
+    "description": "Chrome OTP extension for people who don't want to use OTP.",
     "main": "index.js",
     "type": "module",
     "scripts": {
