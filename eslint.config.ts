@@ -28,6 +28,9 @@ export default defineConfig(
             "@typescript-eslint/strict-boolean-expressions": "error",
             eqeqeq: "error",
             curly: ["error", "all"],
+            // Kind of annoying and doesn't let you use underscores by default.
+            // Plus Typescript can do this already.
+            "@typescript-eslint/no-unused-vars": "off",
         },
     }
 );

@@ -2,6 +2,7 @@ import { render } from "preact";
 import { useState, useEffect } from "preact/hooks";
 import { getAccounts, saveAccount, deleteAccount } from "../storage";
 import { Account } from "../account";
+import type { Request, ResponseGetImageUrls } from "../content/message_interface";
 import jsQR from "jsqr";
 
 function loadImageFromBlob(blob: Blob): Promise<ImageData> {
@@ -27,12 +28,14 @@ function loadImageFromBlob(blob: Blob): Promise<ImageData> {
                 resolve(data);
             } catch (err) {
                 URL.revokeObjectURL(url);
+                // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
                 reject(err);
             }
         };
 
         img.onerror = (e) => {
             URL.revokeObjectURL(url);
+            // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
             reject(e);
         };
 
@@ -48,7 +51,7 @@ const App = () => {
     const [newAccountSecret, setNewAccountSecret] = useState("");
 
     useEffect(() => {
-        loadAccounts();
+        void loadAccounts();
     }, []);
 
     const loadAccounts = async () => {
@@ -74,19 +77,20 @@ const App = () => {
         }
         setNewAccountName("");
         setNewAccountSecret("");
-        loadAccounts();
+        await loadAccounts();
     };
 
     const handleDelete = async (id: string) => {
         await deleteAccount(id);
-        loadAccounts();
+        await loadAccounts();
     };
 
     const handleScanQR = async () => {
         const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
         if (tab?.id !== undefined) {
             try {
-                const response = await chrome.tabs.sendMessage(tab.id, { type: "GET_IMAGE_URLS" });
+                const request: Request = { type: "GET_IMAGE_URLS" };
+                const response: ResponseGetImageUrls = await chrome.tabs.sendMessage(tab.id, request);
 
                 const blobs: Blob[] = await Promise.all(
                     // Must use same-origin for CORS reasons.
@@ -105,12 +109,20 @@ const App = () => {
                     if (code !== null && code.data.startsWith("otpauth://")) {
                         const uri = new URL(code.data);
                         const secret = uri.searchParams.get("secret");
-                        const label = decodeURIComponent(uri.pathname.split(":").pop() || "");
+                        const labelPart = uri.pathname.split(":").pop();
+                        const label = labelPart !== undefined ? decodeURIComponent(labelPart) : null;
                         const issuer = uri.searchParams.get("issuer");
 
-                        if (secret) {
+                        if (secret !== null && secret !== "") {
                             setNewAccountSecret(secret);
-                            setNewAccountName(issuer || label || "New Account");
+                            if (issuer !== null && issuer !== "") {
+                                setNewAccountName(issuer);
+                            } else if (label !== null && label !== "") {
+                                setNewAccountName(label);
+                            } else {
+                                // TODO: New Account N+1
+                                setNewAccountName("New Account");
+                            }
                             break;
                         }
                     }
@@ -151,7 +163,7 @@ const App = () => {
                                 {acc.secret}
                             </div>
                             <button
-                                onClick={() => handleDelete(acc.id)}
+                                onClick={() => void handleDelete(acc.id)}
                                 style={{ border: "none", background: "none", color: "red", cursor: "pointer" }}
                             >
                                 ×
@@ -183,7 +195,7 @@ const App = () => {
                     />
                 </div>
                 <button
-                    onClick={handleScanQR}
+                    onClick={() => void handleScanQR()}
                     style={{
                         padding: "10px",
                         background: "#339721",
@@ -216,7 +228,7 @@ const App = () => {
                 </button>
             </div>
             <button
-                onClick={handleAddAccount}
+                onClick={() => void handleAddAccount()}
                 style={{
                     padding: "10px",
                     background: "#007bff",
@@ -232,4 +244,5 @@ const App = () => {
     );
 };
 
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 render(<App />, document.getElementById("app")!);

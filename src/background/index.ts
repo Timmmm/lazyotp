@@ -19,17 +19,12 @@ const onContextMenu = async (accountId: string | number, tabId: number | undefin
     const accounts = await getAccounts();
     const account = accounts.find((a) => a.id === accountId);
 
-    let i = 0;
-    if (i) {
-        ++i;
-    }
-
     if (account !== undefined && tabId !== undefined) {
         let code: string;
         try {
             const totp = new TOTP({ secret: Secret.fromBase32(account.secret) });
             code = totp.generate();
-        } catch (e) {
+        } catch (_e) {
             code = "ERROR";
         }
 

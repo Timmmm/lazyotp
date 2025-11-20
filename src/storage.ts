@@ -1,11 +1,12 @@
 import { Secret } from "otpauth";
-import { Account } from "./account";
+import type { Account } from "./account";
 
 const STORAGE_KEY = "lazyotp_accounts";
 
 export async function getAccounts(): Promise<Account[]> {
     const result = await chrome.storage.local.get(STORAGE_KEY);
-    return (result[STORAGE_KEY] as Account[]) || [];
+    const accounts = result[STORAGE_KEY];
+    return accounts === undefined ? [] : (accounts as Account[]);
 }
 
 export async function saveAccount(account: Account): Promise<void> {
@@ -16,7 +17,7 @@ export async function saveAccount(account: Account): Promise<void> {
     }
     try {
         Secret.fromBase32(account.secret);
-    } catch (e) {
+    } catch (_e) {
         throw Error("Not a valid base32 secret.");
     }
     accounts.push(account);
