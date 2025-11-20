@@ -6,8 +6,10 @@ import sharp from "sharp";
 import { writeFile } from "fs/promises";
 
 // Set manifest version to package.json version.
-import { version } from "./package.json";
+import { version, description } from "./package.json";
+
 manifest.version = version;
+manifest.description = description;
 
 // Generate extension icon PNGs.
 const ICON_SIZES = [16, 32, 48, 128];

@@ -1,8 +1,8 @@
 {
     "manifest_version": 3,
     "name": "LazyOTP",
-    "version": "1.0.0",
-    "description": "Chrome OTP extension for people who don't want to use OTP.",
+    "version": "0.0.0",
+    "description": "",
     "action": {
         "default_popup": "index.html"
     },
