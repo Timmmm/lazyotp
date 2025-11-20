@@ -1,2 +1,5 @@
 /dist
 /node_modules
+# These are generated.
+# TODO: Don't generate them in the source directory.
+/icons/*.png
