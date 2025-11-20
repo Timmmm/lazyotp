@@ -1,11 +1,12 @@
 import { defineConfig } from "vite";
 import preact from "@preact/preset-vite";
 import { crx } from "@crxjs/vite-plugin";
-import manifest from "./manifest.json";
+import zipPack from "vite-plugin-zip-pack";
 import sharp from "sharp";
 import { writeFile } from "fs/promises";
 
 // Set manifest version to package.json version.
+import manifest from "./manifest.json";
 import { version, description } from "./package.json";
 
 manifest.version = version;
@@ -30,7 +31,7 @@ const genIcons = () => ({
 });
 
 export default defineConfig({
-    plugins: [genIcons(), preact(), crx({ manifest })],
+    plugins: [genIcons(), preact(), crx({ manifest }), zipPack()],
     build: {
         minify: false,
     },
