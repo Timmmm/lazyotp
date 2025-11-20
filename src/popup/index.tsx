@@ -146,7 +146,7 @@ const App = () => {
         <div style={{ display: "flex", flexDirection: "column", gap: "12px", padding: "16px", height: "100%" }}>
             {/* List of accounts. */}
             <div style={{ flex: 1, overflowY: "scroll" }}>
-                {accounts.length === 0 && <p style={{ color: "#666" }}>No accounts yet.</p>}
+                {accounts.length === 0 && <p style={{ color: "#666" }}>No accounts yet. Add one below.</p>}
                 {accounts.map((acc) => (
                     <div
                         key={acc.name}
@@ -157,25 +157,40 @@ const App = () => {
                             boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
                         }}
                     >
-                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "4px" }}>
-                            <span style={{ fontWeight: "bold", marginTop: "4px" }}>{acc.name}</span>
-                            <div
-                                style={{
-                                    fontSize: "11px",
-                                    color: "#999",
-                                    wordBreak: "break-all",
-                                    marginTop: "4px",
-                                    fontFamily: "monospace",
-                                    userSelect: "all",
-                                }}
-                            >
-                                {acc.uri}
+                        <div
+                            style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "start",
+                                marginBottom: "4px",
+                            }}
+                        >
+                            <div>
+                                <div style={{ fontWeight: "bold", marginTop: "4px" }}>{acc.name}</div>
+                                <div
+                                    style={{
+                                        fontSize: "11px",
+                                        color: "#999",
+                                        wordBreak: "break-all",
+                                        marginTop: "4px",
+                                        fontFamily: "monospace",
+                                        userSelect: "all",
+                                    }}
+                                >
+                                    {acc.uri}
+                                </div>
                             </div>
                             <button
                                 onClick={() => void handleDelete(acc.name)}
-                                style={{ border: "none", background: "none", color: "red", cursor: "pointer" }}
+                                style={{
+                                    border: "none",
+                                    background: "none",
+                                    color: "red",
+                                    cursor: "pointer",
+                                    fontSize: "200%",
+                                }}
                             >
-                                ×
+                                🗑
                             </button>
                         </div>
                     </div>

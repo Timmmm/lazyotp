@@ -1,4 +1,4 @@
-import { URI } from "otpauth";
+import { HOTP, URI } from "otpauth";
 import type { Account } from "./account";
 
 const STORAGE_KEY = "lazyotp_accounts";
@@ -12,7 +12,7 @@ export async function getAccounts(): Promise<Account[]> {
 export async function saveAccount(account: Account): Promise<void> {
     const accounts = await getAccounts();
     if (accounts.find((a) => a.name === account.name) !== undefined) {
-        throw Error("Account with that name already exists");
+        throw Error("An account with that name already exists.");
     }
     accounts.push(account);
     await chrome.storage.local.set({ [STORAGE_KEY]: accounts });
@@ -38,7 +38,10 @@ export async function codeForAccount(name: string): Promise<string> {
 
     const otp = URI.parse(account.uri);
     const code = otp.generate();
-    // Need to save it back for counter-based codes.
-    account.uri = URI.stringify(otp);
+    if (otp instanceof HOTP) {
+        ++otp.counter;
+        // Need to increment the counter and save it back for counter-based codes.
+        account.uri = URI.stringify(otp);
+    }
     return code;
 }
