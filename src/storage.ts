@@ -1,4 +1,4 @@
-import { HOTP, URI } from "otpauth";
+import { TOTP, URI } from "otpauth";
 import type { Account } from "./account";
 
 const STORAGE_KEY = "lazyotp_accounts";
@@ -37,11 +37,13 @@ export async function codeForAccount(name: string): Promise<string> {
     }
 
     const otp = URI.parse(account.uri);
-    const code = otp.generate();
-    if (otp instanceof HOTP) {
-        ++otp.counter;
+    if (otp instanceof TOTP) {
+        return otp.generate();
+    } else {
         // Need to increment the counter and save it back for counter-based codes.
-        account.uri = URI.stringify(otp);
+        const code = otp.generate({ counter: account.counter });
+        ++account.counter;
+        await chrome.storage.local.set({ [STORAGE_KEY]: accounts });
+        return code;
     }
-    return code;
 }
