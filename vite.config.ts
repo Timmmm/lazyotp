@@ -33,7 +33,7 @@ const genIcons = () => ({
 export default defineConfig({
     plugins: [genIcons(), preact(), crx({ manifest }), zipPack()],
     build: {
-        minify: false,
+        // minify: false,
         target: "esnext",
     },
 });
