@@ -1,5 +1,4 @@
-import { getAccounts } from "../storage";
-import { URI } from "otpauth";
+import { codeForAccount, getAccounts } from "../storage";
 
 // Add a context menu entry for each account.
 const updateContextMenus = async () => {
@@ -16,20 +15,11 @@ const updateContextMenus = async () => {
 };
 
 const onContextMenu = async (accountName: string | number, tabId: number | undefined) => {
-    const accounts = await getAccounts();
-    const account = accounts.find((a) => a.name === accountName);
-
-    if (account !== undefined && tabId !== undefined) {
-        let code: string;
-        try {
-            const otp = URI.parse(account.uri);
-            code = otp.generate();
-        } catch (_e) {
-            code = "ERROR";
-        }
-
-        await chrome.tabs.sendMessage(tabId, { type: "FILL_OTP", code });
+    if (tabId === undefined) {
+        return;
     }
+    const code = await codeForAccount(accountName.toString());
+    await chrome.tabs.sendMessage(tabId, { type: "FILL_OTP", code });
 };
 
 // Update the context menus when the extension is installed or updated.

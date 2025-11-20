@@ -76,7 +76,6 @@ const App = () => {
         const newAccount: Account = {
             name: newAccountName,
             uri: newAccountUri,
-            counter: 0,
         };
         try {
             await saveAccount(newAccount);
